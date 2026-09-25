@@ -8,7 +8,7 @@ test("Firebase Admin Auth loads in a CommonJS server runtime", () => {
     [
       "--no-experimental-require-module",
       "-e",
-      "require('firebase-admin/auth');",
+      "require('firebase-admin/auth'); require('jwks-rsa');",
     ],
     { cwd: process.cwd(), encoding: "utf8" },
   );

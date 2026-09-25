@@ -20,9 +20,7 @@ const oldImport = `const jose = require('jose');${newline}`;
 const oldFunction = `async function retrieveSigningKeys(jwks) {${newline}  const results = [];`;
 const newFunction =
   `async function retrieveSigningKeys(jwks) {${newline}  const jose = await import('jose');${newline}  const results = [];`;
-if (source.includes(newFunction) && !source.includes(oldImport)) {
-  process.stdout.write("jwks-rsa ESM patch already applied\n");
-} else {
+if (!source.includes(newFunction) || source.includes(oldImport)) {
   if (!source.includes(oldImport) || !source.includes(oldFunction)) {
     throw new Error("jwks-rsa source changed; review the ESM patch.");
   }
@@ -30,5 +28,37 @@ if (source.includes(newFunction) && !source.includes(oldImport)) {
     sourcePath,
     source.replace(oldImport, "").replace(oldFunction, newFunction),
   );
-  process.stdout.write("Patched jwks-rsa to import jose asynchronously\n");
 }
+
+const passportPath = path.join(
+  path.dirname(packagePath),
+  "src",
+  "integrations",
+  "passport.js",
+);
+const passport = fs.readFileSync(passportPath, "utf8");
+const passportNewline = passport.includes("\r\n") ? "\r\n" : "\n";
+const passportOldImport = `const jose = require('jose');${passportNewline}`;
+const passportOldFunction = `return function secretProvider(req, rawJwtToken, cb) {${passportNewline}    let decoded;`;
+const passportNewFunction = [
+  "return async function secretProvider(req, rawJwtToken, cb) {",
+  "    let jose;",
+  "    try {",
+  "      jose = await import('jose');",
+  "    } catch (err) {",
+  "      return cb(err, null);",
+  "    }",
+  "    let decoded;",
+].join(passportNewline);
+if (!passport.includes(passportNewFunction) || passport.includes(passportOldImport)) {
+  if (!passport.includes(passportOldImport) || !passport.includes(passportOldFunction)) {
+    throw new Error("jwks-rsa Passport source changed; review the ESM patch.");
+  }
+  fs.writeFileSync(
+    passportPath,
+    passport
+      .replace(passportOldImport, "")
+      .replace(passportOldFunction, passportNewFunction),
+  );
+}
+process.stdout.write("jwks-rsa ESM compatibility patch applied\n");
