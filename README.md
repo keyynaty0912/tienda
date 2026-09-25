@@ -11,6 +11,7 @@ npm install
 npm run dev
 ```
 
+
 Abrir http://localhost:3000, el origen configurado por defecto para validar las solicitudes. Los scripts invocan los ejecutables con Node para soportar el `&` en la ruta de este workspace en Windows.
 
 El comando `npm install` aplica un parche local a `jwks-rsa@4.1.0`: esa dependencia carga `jose@6` con `require()` y falla en algunos entornos CommonJS de producción al importar Firebase Admin Auth. El parche usa `import()` en las dos rutas afectadas y exige revisar el cambio si se actualiza `jwks-rsa`. Está en `scripts/patch-jwks.cjs` y se ejecuta con `postinstall`; el despliegue debe instalar dependencias con scripts habilitados. Retirar el parche cuando el proveedor publique la corrección.
