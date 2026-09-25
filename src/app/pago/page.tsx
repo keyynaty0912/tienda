@@ -1,1 +1,13 @@
-import {Suspense} from 'react';import {OrderLookup} from '@/components/checkout';export const metadata={title:'Resultado de pago',robots:{index:false,follow:false}};export default function Page(){return <Suspense><OrderLookup paymentReturn/></Suspense>}
+import { Suspense } from "react";
+import { OrderLookup } from "@/components/checkout";
+export const metadata = {
+  title: "Resultado de pago",
+  robots: { index: false, follow: false },
+};
+export default function Page() {
+  return (
+    <Suspense>
+      <OrderLookup paymentReturn />
+    </Suspense>
+  );
+}

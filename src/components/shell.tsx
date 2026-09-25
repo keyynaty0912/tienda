@@ -1,4 +1,180 @@
-'use client';
-import Link from 'next/link';import {usePathname} from 'next/navigation';import {useRef} from 'react';import {Heart,Menu,Search,ShoppingBag,UserRound,House,X} from 'lucide-react';import {useStore} from './store';
-export function Header(){const {demo,cart}=useStore(),menu=useRef<HTMLDialogElement>(null),path=usePathname();const total=cart.reduce((a,l)=>a+l.quantity,0);return <><a href="#main" className="skip">Saltar al contenido</a>{demo&&<div className="demo-strip">Modo demostración · Fotografías y catálogo ilustrativos · Sin cobros reales</div>}<header id="header"><div className="header-inner container"><button className="icon-btn menu-btn" aria-label="Abrir menú" onClick={()=>menu.current?.showModal()}><Menu/></button><Link className="brand" href="/" aria-label="Key & Naty, inicio"><strong>Key <i>&</i> Naty</strong><span>Boutique infantil</span></Link><nav className="desktop-links" aria-label="Categorías"><Link href="/catalogo">Colección</Link>{['Bebé','Niña','Niño','Unisex'].map(c=><Link key={c} href={'/catalogo?categoria='+encodeURIComponent(c)}>{c}</Link>)}</nav><div className="header-actions"><Link className="icon-btn desktop-action" href="/buscar" aria-label="Buscar prendas"><Search/></Link><Link className="icon-btn desktop-action" href="/favoritos" aria-label="Favoritos"><Heart/></Link><Link className="icon-btn desktop-action" href="/cuenta" aria-label="Mi cuenta"><UserRound/></Link><Link className="icon-btn" href="/carrito" aria-label={`Bolsa, ${total} prendas`}><ShoppingBag/>{total>0&&<span className="count">{total}</span>}</Link></div></div></header><nav className="mobile-nav" aria-label="Navegación móvil"><Link href="/" className={path==='/'?'active':''}><House/>Inicio</Link><Link href="/buscar"><Search/>Buscar</Link><Link href="/favoritos"><Heart/>Favoritos</Link><Link href="/carrito"><ShoppingBag/>Bolsa {total||''}</Link></nav><dialog ref={menu}><div className="dialog-head"><h2>Explora Key & Naty</h2><button className="icon-btn" aria-label="Cerrar menú" onClick={()=>menu.current?.close()}><X/></button></div><nav className="menu-links">{[['Colección','/catalogo'],['Bebé','/catalogo?categoria=Bebé'],['Niña','/catalogo?categoria=Niña'],['Niño','/catalogo?categoria=Niño'],['Unisex','/catalogo?categoria=Unisex'],['Mi cuenta','/cuenta'],['Consultar pedido','/pedido'],['Ayuda','/contacto']].map(([n,href])=><Link key={n} href={href} onClick={()=>menu.current?.close()}>{n}</Link>)}</nav></dialog></>}
-export function Footer(){const {config,demo}=useStore(),s=config.seller;return <footer id="footer"><div className="container"><div className="footer-inner"><div><div className="monogram" aria-label="Monograma K y N">K<span style={{fontSize:30}}>&</span>N</div><p className="small" style={{marginTop:12}}>Pequeñas prendas. Grandes historias.</p></div><div className="footer-links"><Link href="/nosotros">Nosotros</Link><Link href="/contacto">Ayuda</Link><Link href="/pedido">Tu pedido</Link><Link href="/politicas/envios">Envíos</Link><Link href="/politicas/cambios">Cambios</Link><Link href="/politicas/privacidad">Privacidad</Link><Link href="/politicas/terminos">Términos</Link></div></div><p className="footer-note">{s.name?`${s.name} · ${s.taxId} · ${s.address}`:'Datos del vendedor pendientes de completar.'}{s.email&&<> · <a href={`mailto:${s.email}`}>{s.email}</a></>}{demo&&' · Catálogo, precios y fotografías de demostración.'} · Colombia</p></div></footer>}
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRef } from "react";
+import {
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserRound,
+  House,
+  X,
+} from "lucide-react";
+import { useStore } from "./store";
+export function Header() {
+  const { demo, cart } = useStore(),
+    menu = useRef<HTMLDialogElement>(null),
+    path = usePathname();
+  const total = cart.reduce((a, l) => a + l.quantity, 0);
+  return (
+    <>
+      <a href="#main" className="skip">
+        Saltar al contenido
+      </a>
+      {demo && (
+        <div className="demo-strip">
+          Modo demostración · Fotografías y catálogo ilustrativos · Sin cobros
+          reales
+        </div>
+      )}
+      <header id="header">
+        <div className="header-inner container">
+          <button
+            className="icon-btn menu-btn"
+            aria-label="Abrir menú"
+            onClick={() => menu.current?.showModal()}
+          >
+            <Menu />
+          </button>
+          <Link className="brand" href="/" aria-label="Key & Naty, inicio">
+            <strong>
+              Key <i>&</i> Naty
+            </strong>
+            <span>Boutique infantil</span>
+          </Link>
+          <nav className="desktop-links" aria-label="Categorías">
+            <Link href="/catalogo">Colección</Link>
+            {["Bebé", "Niña", "Niño", "Unisex"].map((c) => (
+              <Link
+                key={c}
+                href={"/catalogo?categoria=" + encodeURIComponent(c)}
+              >
+                {c}
+              </Link>
+            ))}
+          </nav>
+          <div className="header-actions">
+            <Link
+              className="icon-btn desktop-action"
+              href="/buscar"
+              aria-label="Buscar prendas"
+            >
+              <Search />
+            </Link>
+            <Link
+              className="icon-btn desktop-action"
+              href="/favoritos"
+              aria-label="Favoritos"
+            >
+              <Heart />
+            </Link>
+            <Link
+              className="icon-btn desktop-action"
+              href="/cuenta"
+              aria-label="Mi cuenta"
+            >
+              <UserRound />
+            </Link>
+            <Link
+              className="icon-btn"
+              href="/carrito"
+              aria-label={`Bolsa, ${total} prendas`}
+            >
+              <ShoppingBag />
+              {total > 0 && <span className="count">{total}</span>}
+            </Link>
+          </div>
+        </div>
+      </header>
+      <nav className="mobile-nav" aria-label="Navegación móvil">
+        <Link href="/" className={path === "/" ? "active" : ""}>
+          <House />
+          Inicio
+        </Link>
+        <Link href="/buscar">
+          <Search />
+          Buscar
+        </Link>
+        <Link href="/favoritos">
+          <Heart />
+          Favoritos
+        </Link>
+        <Link href="/carrito">
+          <ShoppingBag />
+          Bolsa {total || ""}
+        </Link>
+      </nav>
+      <dialog ref={menu}>
+        <div className="dialog-head">
+          <h2>Explora Key & Naty</h2>
+          <button
+            className="icon-btn"
+            aria-label="Cerrar menú"
+            onClick={() => menu.current?.close()}
+          >
+            <X />
+          </button>
+        </div>
+        <nav className="menu-links">
+          {[
+            ["Colección", "/catalogo"],
+            ["Bebé", "/catalogo?categoria=Bebé"],
+            ["Niña", "/catalogo?categoria=Niña"],
+            ["Niño", "/catalogo?categoria=Niño"],
+            ["Unisex", "/catalogo?categoria=Unisex"],
+            ["Mi cuenta", "/cuenta"],
+            ["Consultar pedido", "/pedido"],
+            ["Ayuda", "/contacto"],
+          ].map(([n, href]) => (
+            <Link key={n} href={href} onClick={() => menu.current?.close()}>
+              {n}
+            </Link>
+          ))}
+        </nav>
+      </dialog>
+    </>
+  );
+}
+export function Footer() {
+  const { config, demo } = useStore(),
+    s = config.seller;
+  return (
+    <footer id="footer">
+      <div className="container">
+        <div className="footer-inner">
+          <div>
+            <div className="monogram" aria-label="Monograma K y N">
+              K<span style={{ fontSize: 30 }}>&</span>N
+            </div>
+            <p className="small" style={{ marginTop: 12 }}>
+              Pequeñas prendas. Grandes historias.
+            </p>
+          </div>
+          <div className="footer-links">
+            <Link href="/nosotros">Nosotros</Link>
+            <Link href="/contacto">Ayuda</Link>
+            <Link href="/pedido">Tu pedido</Link>
+            <Link href="/politicas/envios">Envíos</Link>
+            <Link href="/politicas/cambios">Cambios</Link>
+            <Link href="/politicas/privacidad">Privacidad</Link>
+            <Link href="/politicas/terminos">Términos</Link>
+          </div>
+        </div>
+        <p className="footer-note">
+          {s.name
+            ? `${s.name} · ${s.taxId} · ${s.address}`
+            : "Datos del vendedor pendientes de completar."}
+          {s.email && (
+            <>
+              {" "}
+              · <a href={`mailto:${s.email}`}>{s.email}</a>
+            </>
+          )}
+          {demo && " · Catálogo, precios y fotografías de demostración."} ·
+          Colombia
+        </p>
+      </div>
+    </footer>
+  );
+}

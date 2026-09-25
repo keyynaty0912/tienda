@@ -1,2 +1,59 @@
-import {NextResponse} from 'next/server';import sharp from 'sharp';import {randomUUID} from 'node:crypto';import {storage} from '@/lib/firebase-admin';import {requireRole,checkOrigin,failure,limitRequest} from '@/lib/security';import {AppError} from '@/lib/errors';
-export async function POST(req:Request){try{checkOrigin(req);const u=await requireRole(['admin','catalog']);await limitRequest(req,'upload:'+u.uid,15);if(Number(req.headers.get('content-length')||0)>6000000)throw new AppError(413,'Máximo 5 MB por imagen.');const form=await req.formData(),file=form.get('file');if(!(file instanceof File)||file.size>5000000||!['image/jpeg','image/png','image/webp'].includes(file.type))throw new AppError(400,'Sube una imagen JPEG, PNG o WebP de hasta 5 MB.');const input=Buffer.from(await file.arrayBuffer()),buffer=await sharp(input,{limitInputPixels:30000000}).rotate().resize({width:1800,height:1800,fit:'inside',withoutEnlargement:true}).webp({quality:85}).toBuffer();if(!process.env.FIREBASE_STORAGE_BUCKET)throw new AppError(503,'Configura Firebase Storage.');const bucket=storage().bucket(),object=bucket.file('catalog/'+randomUUID()+'.webp'),token=randomUUID();await object.save(buffer,{contentType:'image/webp',metadata:{cacheControl:'public,max-age=31536000,immutable',metadata:{firebaseStorageDownloadTokens:token}}});return NextResponse.json({url:`https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(object.name)}?alt=media&token=${token}`})}catch(e){return failure(e)}}
+import { NextResponse } from "next/server";
+import sharp from "sharp";
+import { randomUUID } from "node:crypto";
+import { storage } from "@/lib/firebase-admin";
+import {
+  requireRole,
+  checkOrigin,
+  failure,
+  limitRequest,
+} from "@/lib/security";
+import { AppError } from "@/lib/errors";
+export async function POST(req: Request) {
+  try {
+    checkOrigin(req);
+    const u = await requireRole(["admin", "catalog"]);
+    await limitRequest(req, "upload:" + u.uid, 15);
+    if (Number(req.headers.get("content-length") || 0) > 6000000)
+      throw new AppError(413, "Máximo 5 MB por imagen.");
+    const form = await req.formData(),
+      file = form.get("file");
+    if (
+      !(file instanceof File) ||
+      file.size > 5000000 ||
+      !["image/jpeg", "image/png", "image/webp"].includes(file.type)
+    )
+      throw new AppError(
+        400,
+        "Sube una imagen JPEG, PNG o WebP de hasta 5 MB.",
+      );
+    const input = Buffer.from(await file.arrayBuffer()),
+      buffer = await sharp(input, { limitInputPixels: 30000000 })
+        .rotate()
+        .resize({
+          width: 1800,
+          height: 1800,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 85 })
+        .toBuffer();
+    if (!process.env.FIREBASE_STORAGE_BUCKET)
+      throw new AppError(503, "Configura Firebase Storage.");
+    const bucket = storage().bucket(),
+      object = bucket.file("catalog/" + randomUUID() + ".webp"),
+      token = randomUUID();
+    await object.save(buffer, {
+      contentType: "image/webp",
+      metadata: {
+        cacheControl: "public,max-age=31536000,immutable",
+        metadata: { firebaseStorageDownloadTokens: token },
+      },
+    });
+    return NextResponse.json({
+      url: `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURIComponent(object.name)}?alt=media&token=${token}`,
+    });
+  } catch (e) {
+    return failure(e);
+  }
+}

@@ -1,4 +1,58 @@
-import {NextResponse} from 'next/server';import {cookies} from 'next/headers';import {z} from 'zod';import {auth} from '@/lib/firebase-admin';import {checkOrigin,readJson,failure,limitRequest,user} from '@/lib/security';import {AppError} from '@/lib/errors';
-export async function GET(){const u=await user();return NextResponse.json({user:u?{uid:u.uid,email:u.email,verified:u.email_verified,role:u.role||'customer'}:null})}
-export async function POST(req:Request){try{checkOrigin(req);await limitRequest(req,'login',30);const {idToken}=z.object({idToken:z.string().max(20000)}).parse(await readJson(req));const decoded=await auth().verifyIdToken(idToken,true);if(Date.now()/1000-decoded.auth_time>300)throw new AppError(401,'Inicia sesión de nuevo para continuar.');const expiresIn=5*24*60*60*1000,session=await auth().createSessionCookie(idToken,{expiresIn});(await cookies()).set('kn_session',session,{httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'lax',maxAge:expiresIn/1000,path:'/'});return NextResponse.json({ok:true})}catch(e){return failure(e)}}
-export async function DELETE(req:Request){try{checkOrigin(req);(await cookies()).delete('kn_session');return NextResponse.json({ok:true})}catch(e){return failure(e)}}
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { z } from "zod";
+import { auth } from "@/lib/firebase-admin";
+import {
+  checkOrigin,
+  readJson,
+  failure,
+  limitRequest,
+  user,
+} from "@/lib/security";
+import { AppError } from "@/lib/errors";
+export async function GET() {
+  const u = await user();
+  return NextResponse.json({
+    user: u
+      ? {
+          uid: u.uid,
+          email: u.email,
+          verified: u.email_verified,
+          role: u.role || "customer",
+        }
+      : null,
+  });
+}
+export async function POST(req: Request) {
+  try {
+    checkOrigin(req);
+    await limitRequest(req, "login", 30);
+    const { idToken } = z
+      .object({ idToken: z.string().max(20000) })
+      .parse(await readJson(req));
+    const decoded = await auth().verifyIdToken(idToken, true);
+    if (Date.now() / 1000 - decoded.auth_time > 300)
+      throw new AppError(401, "Inicia sesión de nuevo para continuar.");
+    const expiresIn = 5 * 24 * 60 * 60 * 1000,
+      session = await auth().createSessionCookie(idToken, { expiresIn });
+    (await cookies()).set("kn_session", session, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: expiresIn / 1000,
+      path: "/",
+    });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return failure(e);
+  }
+}
+export async function DELETE(req: Request) {
+  try {
+    checkOrigin(req);
+    (await cookies()).delete("kn_session");
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return failure(e);
+  }
+}
