@@ -1,0 +1,1 @@
+'use client';export default function ErrorPage({reset}:{reset:()=>void}){return <div className="container section" role="alert"><h1>No pudimos cargar esta página.</h1><p>Tu bolsa se conserva en este dispositivo. Inténtalo de nuevo.</p><button className="btn" onClick={reset}>Reintentar</button></div>}

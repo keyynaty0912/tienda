@@ -1,0 +1,1 @@
+import {Suspense} from 'react';import {OrderLookup} from '@/components/checkout';export const metadata={title:'Consultar pedido',robots:{index:false,follow:false}};export default function Page(){return <Suspense><OrderLookup/></Suspense>}

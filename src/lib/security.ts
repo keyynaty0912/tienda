@@ -1,0 +1,18 @@
+import 'server-only';
+import {cookies} from 'next/headers';
+import {createHash,createHmac,randomBytes,timingSafeEqual} from 'node:crypto';
+import {NextResponse} from 'next/server';
+import {ZodError} from 'zod';
+import {auth,col,firebaseConfigured,isDemo} from './firebase-admin';
+import {AppError} from './errors';
+export const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
+export function same(a:string,b:string){const x=Buffer.from(a),y=Buffer.from(b);return x.length===y.length&&timingSafeEqual(x,y)}
+export function tokenFor(orderId:string,guest:string){const secret=process.env.ORDER_TOKEN_SECRET;if(!secret||secret.length<32)throw new AppError(503,'Configura la clave de consulta segura de pedidos.');return createHmac('sha256',secret).update(orderId+':'+guest).digest('hex')}
+export function checkOrigin(req:Request){const origin=req.headers.get('origin');const expected=new URL(process.env.NEXT_PUBLIC_SITE_URL||'http://localhost:3000').origin;if(!origin||!(origin===expected||(process.env.NODE_ENV!=='production'&&['http://127.0.0.1:3000','http://localhost:3000'].includes(origin))))throw new AppError(403,'Origen no permitido.');if(req.headers.get('sec-fetch-site')==='cross-site')throw new AppError(403,'Solicitud no permitida.')}
+export async function readJson(req:Request){const size=Number(req.headers.get('content-length')||0);if(size>100000)throw new AppError(413,'Solicitud demasiado grande.');const text=await req.text();if(Buffer.byteLength(text)>100000)throw new AppError(413,'Solicitud demasiado grande.');try{return JSON.parse(text)}catch{throw new AppError(400,'JSON inválido.')}}
+export async function guestSession(){const jar=await cookies();let guest=jar.get('kn_guest')?.value;if(!guest||!/^[a-f0-9]{64}$/.test(guest)){guest=randomBytes(32).toString('hex');jar.set('kn_guest',guest,{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:60*60*24*30,path:'/'})}return guest}
+export async function user(){const session=(await cookies()).get('kn_session')?.value;if(!session||!firebaseConfigured())return null;try{return await auth().verifySessionCookie(session,true)}catch{return null}}
+export async function requireRole(roles:string[]=['admin']){const u=await user();if(!u||!u.email_verified||!roles.includes(String(u.role)))throw new AppError(403,'Acceso restringido. Inicia sesión con una cuenta autorizada.');if(!isDemo()&&!u.firebase?.sign_in_second_factor)throw new AppError(403,'Se requiere autenticación de dos factores para administrar producción.');return u}
+export async function rateLimit(key:string,limit=20,windowMs=60000){if(!firebaseConfigured())return;const now=Date.now(),ref=col('rateLimits').doc(hash(key+':'+Math.floor(now/windowMs)));await col('rateLimits').firestore.runTransaction(async tx=>{const doc=await tx.get(ref),n=doc.data()?.count||0;if(n>=limit)throw new AppError(429,'Demasiados intentos. Espera un momento.');tx.set(ref,{count:n+1,expiresAt:now+windowMs*2})})}
+export async function limitRequest(req:Request,scope:string,limit=20){const header=process.env.TRUSTED_IP_HEADER;const ip=header?req.headers.get(header)||'unknown':'global';await rateLimit(scope+':'+ip,limit)}
+export function failure(error:unknown){if(error instanceof ZodError)return NextResponse.json({error:error.issues.map(i=>`${i.path.join('.')}: ${i.message}`).join('; '),code:'INVALID_INPUT'},{status:400});if(error instanceof AppError)return NextResponse.json({error:error.message,code:error.code},{status:error.status});console.error('Error interno de operación',error instanceof Error?error.name:'Unknown');return NextResponse.json({error:'No se pudo completar la operación. Inténtalo de nuevo.',code:'INTERNAL_ERROR'},{status:500})}

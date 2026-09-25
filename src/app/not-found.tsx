@@ -1,0 +1,1 @@
+import Link from 'next/link';export default function NotFound(){return <div className="container section"><h1>No encontramos esta página.</h1><p>Explora la colección para encontrar otra prenda.</p><Link className="btn" href="/catalogo">Ver colección</Link></div>}

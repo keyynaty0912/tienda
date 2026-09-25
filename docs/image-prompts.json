@@ -1,0 +1,31 @@
+{
+  "mode": "built-in image_gen",
+  "purpose": "Fictitious demo assets, not actual stock",
+  "assets": [
+    {
+      "key": "hero",
+      "prompt": "Use case: photorealistic-natural\nAsset type: standalone editorial photograph for a fictitious children's boutique design demo, not a website mockup.\nPrimary request: Two fully clothed children aged 4–7 candidly walking together in a warm Colombian colonial courtyard, wearing timeless cream and sage outfits.\nScene/backdrop: warm stone courtyard, wood architectural details, soft natural daylight.\nStyle/medium: realistic editorial lifestyle photography, natural skin and fabric textures, gentle candid expressions.\nComposition/framing: landscape 3:2 or wider, full-body children near center-right to permit cropping, breathing room and courtyard on left.\nConstraints: no text, no logos, no watermarks, no UI, no graphic layout. Fictitious demo photo.",
+      "path": "C:\\Users\\Jeison Llanos\\.codex\\generated_images\\01a0d7b9-c4a2-7131-a163-b25bb8fc8107\\exec-834c6a18-a916-4820-a28e-3be813fb11f4.png"
+    },
+    {
+      "key": "ivory-dress",
+      "prompt": "Use case: product-mockup\nAsset type: standalone fictitious children's boutique demo apparel photograph.\nPrimary request: A single ivory sleeveless small child's dress with subtle delicate botanical embroidery, hanging neatly from one natural wooden hanger against a warm beige studio backdrop.\nStyle/medium: realistic refined product photography, natural woven fabric detail, softly diffused daylight from left, gentle soft shadow.\nComposition/framing: portrait 3:4, centered complete garment with generous consistent margins, straight-on camera, simple warm beige background.\nConstraints: only one garment and its hanger, no person, no text, no logo, no watermark, no website or graphic layout.",
+      "path": "C:\\Users\\Jeison Llanos\\.codex\\generated_images\\01a0d7b9-c4a2-7131-a163-b25bb8fc8107\\exec-ab755802-00b2-44c7-9acf-b1c77fa65e75.png"
+    },
+    {
+      "key": "sage-shirt",
+      "prompt": "Use case: product-mockup\nAsset type: standalone fictitious children's boutique demo apparel photograph.\nPrimary request: A single sage green child's long-sleeve collarless button shirt, hanging neatly from one natural wooden hanger against a warm beige studio backdrop.\nStyle/medium: realistic refined product photography, natural woven fabric detail, softly diffused daylight from left, gentle soft shadow.\nComposition/framing: portrait 3:4, centered complete garment with generous consistent margins, straight-on camera, simple warm beige background.\nConstraints: only one garment and its hanger, no person, no text, no logo, no watermark, no website or graphic layout.",
+      "path": "C:\\Users\\Jeison Llanos\\.codex\\generated_images\\01a0d7b9-c4a2-7131-a163-b25bb8fc8107\\exec-5da74502-5f9e-476d-9d30-f028853b4ea0.png"
+    },
+    {
+      "key": "terracotta-overalls",
+      "prompt": "Use case: product-mockup\nAsset type: standalone fictitious children's boutique demo apparel photograph.\nPrimary request: A single pair of terracotta baby short overalls, hanging neatly from one natural wooden hanger against a warm beige studio backdrop.\nStyle/medium: realistic refined product photography, natural woven fabric detail, softly diffused daylight from left, gentle soft shadow.\nComposition/framing: portrait 3:4, centered complete garment with generous consistent margins, straight-on camera, simple warm beige background.\nConstraints: only one garment and its hanger, no person, no text, no logo, no watermark, no website or graphic layout.",
+      "path": "C:\\Users\\Jeison Llanos\\.codex\\generated_images\\01a0d7b9-c4a2-7131-a163-b25bb8fc8107\\exec-efa63632-2b26-4b6e-ab1c-1c47b21ad650.png"
+    },
+    {
+      "key": "oatmeal-cardigan",
+      "prompt": "Use case: product-mockup\nAsset type: standalone fictitious children's boutique demo apparel photograph.\nPrimary request: A single oatmeal child's knitted cardigan, hanging neatly from one natural wooden hanger against a warm beige studio backdrop.\nStyle/medium: realistic refined product photography, natural knit texture and fine detail, softly diffused daylight from left, gentle soft shadow.\nComposition/framing: portrait 3:4, centered complete garment with generous consistent margins, straight-on camera, simple warm beige background.\nConstraints: only one garment and its hanger, no person, no text, no logo, no watermark, no website or graphic layout.",
+      "path": "C:\\Users\\Jeison Llanos\\.codex\\generated_images\\01a0d7b9-c4a2-7131-a163-b25bb8fc8107\\exec-e158df30-449a-459c-b65b-1a1bb99601a8.png"
+    }
+  ]
+}

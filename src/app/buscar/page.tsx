@@ -1,0 +1,1 @@
+import {Suspense} from 'react';import {Catalog} from '@/components/catalog';export const metadata={title:'Buscar prendas',robots:{index:false,follow:true}};export default function Page(){return <Suspense fallback={<p>Cargando búsqueda…</p>}><Catalog/></Suspense>}
