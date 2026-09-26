@@ -1,0 +1,10 @@
+.git
+.next
+node_modules
+.firebase
+.env*
+*firebase-adminsdk*.json
+service-account*.json
+credentials*.json
+*.log
+*.tsbuildinfo

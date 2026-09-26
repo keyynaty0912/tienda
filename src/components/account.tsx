@@ -121,7 +121,10 @@ export function Account({ admin = false }: { admin?: boolean }) {
       }
       if (mode === "register") {
         const c = await createUserWithEmailAndPassword(a, email, password);
-        await sendEmailVerification(c.user);
+        await sendEmailVerification(c.user, {
+          url: `${window.location.origin}/cuenta`,
+          handleCodeInApp: false,
+        });
         setMessage(
           "Cuenta creada. Revisa tu correo para verificarla y luego inicia sesión.",
         );
@@ -175,10 +178,46 @@ export function Account({ admin = false }: { admin?: boolean }) {
         <h1>Tu cuenta</h1>
         <p>{session.email}</p>
         {!session.verified && (
-          <p className="notice">
-            Verifica tu correo para acceder a funciones administrativas.
-          </p>
+          <div className="notice">
+            <p>Verifica tu correo para acceder a funciones administrativas.</p>
+            <button
+              className="text-link"
+              disabled={busy}
+              onClick={async () => {
+                setBusy(true);
+                setMessage("");
+                try {
+                  const a = await clientAuth();
+                  if (!a.currentUser || a.currentUser.uid !== session.uid)
+                    throw new Error(
+                      "Tu sesión de verificación venció. Cierra sesión y vuelve a entrar con este correo; luego solicita el mensaje otra vez.",
+                    );
+                  await sendEmailVerification(a.currentUser, {
+                    url: `${window.location.origin}/cuenta`,
+                    handleCodeInApp: false,
+                  });
+                  setMessage(
+                    "Correo de verificación enviado. Revisa también la carpeta de spam; abre el enlace y vuelve a iniciar sesión.",
+                  );
+                } catch (e) {
+                  const code = (e as { code?: string }).code;
+                  setMessage(
+                    code === "auth/too-many-requests"
+                      ? "Firebase limitó temporalmente los envíos. Inténtalo más tarde."
+                      : code
+                        ? `Firebase no pudo enviar el correo (${code}).`
+                        : (e as Error).message,
+                  );
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            >
+              {busy ? "Enviando…" : "Enviar correo de verificación"}
+            </button>
+          </div>
         )}
+        <p role="status">{message}</p>
         <div className="account-actions">
           {["admin", "catalog", "support", "fulfillment"].includes(
             session.role,
@@ -325,7 +364,6 @@ export function Account({ admin = false }: { admin?: boolean }) {
             </>
           )}
         </details>
-        <p role="status">{message}</p>
       </div>
     );
   return (

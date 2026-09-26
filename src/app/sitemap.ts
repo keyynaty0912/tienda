@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: site },
     { url: site + "/catalogo" },
+    ...(products.some((p) => p.occasion === "Halloween")
+      ? [{ url: site + "/halloween" }]
+      : []),
     ...products
       .filter((p) => !p.demo)
       .map((p) => ({

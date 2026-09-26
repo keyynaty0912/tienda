@@ -3,7 +3,7 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
   connectAuthEmulator,
-  inMemoryPersistence,
+  browserSessionPersistence,
   setPersistence,
 } from "firebase/auth";
 let connected = false;
@@ -25,6 +25,7 @@ export async function clientAuth() {
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
       });
   const auth = getAuth(app);
+  auth.languageCode = "es";
   if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL && !connected) {
     connectAuthEmulator(
       auth,
@@ -33,6 +34,7 @@ export async function clientAuth() {
     );
     connected = true;
   }
-  await setPersistence(auth, inMemoryPersistence);
+  await setPersistence(auth, browserSessionPersistence);
+  await auth.authStateReady();
   return auth;
 }

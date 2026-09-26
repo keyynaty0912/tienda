@@ -1,6 +1,6 @@
 # Key & Naty — Next.js + Firebase
 
-Implementación local iniciada y preparada para configuración. **No está lista para producción**: Firebase y Wompi no están conectados ni verificados, y no se publicaron recursos externos.
+La tienda está desplegada en Vercel y conectada a Firestore (`store-33afa`). **Todavía no está habilitada para vender**: Authentication, Storage, Wompi y los datos comerciales reales siguen pendientes. El catálogo publicado está marcado como demostración y los cobros permanecen desactivados.
 
 ## Abrir
 
@@ -39,6 +39,7 @@ Sin variables Firebase, `CATALOG_MODE=demo` carga cuatro prendas locales identif
 
 ## Configurar
 
+- [Estado de conexión con Firebase, Vercel y Wompi](docs/CONEXION-PRODUCCION.md)
 - [Firebase, acceso y respaldo](docs/FIREBASE.md)
 - [Wompi, eventos y reservas](docs/PAGOS.md)
 - `.env.example`: configuración sin credenciales.
@@ -47,7 +48,7 @@ Sin variables Firebase, `CATALOG_MODE=demo` carga cuatro prendas locales identif
 
 ## Pendiente antes de vender
 
-1. Crear Firebase y verificar reglas, índices, roles, MFA, Storage y lecturas/escrituras reales. Probar simultaneidad sobre la última unidad en Firestore.
+1. Terminar Authentication, roles, MFA y Storage. Firestore, reglas, índices y lecturas/escrituras reales ya se verificaron; también se comprobó concurrencia sobre un documento aislado. Falta la prueba integral de dos compras sobre la última variante con el flujo de pedidos y Wompi.
 2. Completar y revisar datos legales, políticas, catálogo y medidas reales, impuestos, cobertura y atención. Los borradores enlazan fuentes oficiales, no garantizan cumplimiento automático.
 3. Configurar Wompi sandbox y ejecutar compras, eventos inválidos/duplicados/fuera de orden, rechazos, interrupción, conciliación y pago tardío. Implementar el flujo ampliado de reintentos y conciliación de anulaciones/reembolsos antes de producción.
 4. Conectar correo transaccional. Hoy solo se registran eventos en `mailQueue`; no hay envío de confirmaciones ni notificaciones. Seleccionar transportadora/agregador si se desea automatizar lo que hoy se registra manualmente. Conectar facturación si aplica; los resúmenes no son facturas DIAN.

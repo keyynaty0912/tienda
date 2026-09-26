@@ -1,6 +1,6 @@
 # Configuración de Firebase
 
-No se creó un proyecto ni se desplegó ningún recurso. La aplicación usa Next.js 16, TypeScript, Firebase Authentication, Cloud Firestore y Firebase Storage. Las consultas y modificaciones de comercio se realizan mediante el Admin SDK en el servidor. Las reglas incluidas deniegan el acceso directo del navegador a Firestore y Storage; las fotos públicas tienen URL de descarga explícita.
+Se validó la credencial del proyecto `store-33afa`, se registró su aplicación web y se creó Firestore en `us-east1`. Las reglas e índices están desplegados y Vercel ya consulta esta base. Authentication y Storage siguen pendientes; consultar [el estado de conexión](CONEXION-PRODUCCION.md). Las consultas y modificaciones de comercio se realizan mediante el Admin SDK en el servidor. Las reglas incluidas deniegan el acceso directo del navegador a Firestore y Storage; las fotos públicas tienen URL de descarga explícita.
 
 1. Crea un proyecto de pruebas en Firebase Console. No actives Google Analytics todavía. Crea Firestore y configura Email/Password en Authentication; añade los dominios autorizados para desarrollo y el dominio final cuando corresponda.
 2. Copia `.env.example` a `.env.local`. Completa la configuración web de Firebase en las variables `NEXT_PUBLIC_FIREBASE_*`. Esta configuración no concede privilegios administrativos.
@@ -28,4 +28,4 @@ Configura limpieza/TTL de límites de solicitudes con una política apropiada; p
 - Transacciones: https://firebase.google.com/docs/firestore/manage-data/transactions
 - MFA TOTP: https://firebase.google.com/docs/auth/web/totp-mfa
 
-No se verificó una conexión a Firebase porque el propietario indicó que aún no tiene proyecto.
+La autenticación de la cuenta de servicio y el acceso a Firebase Management API se verificaron. También pasaron lecturas y escrituras de Firestore, una prueba de dos reservas concurrentes sobre un documento aislado y el rechazo de lecturas directas sin autorización. El documento temporal de comprobación se eliminó al terminar. Esto aún no sustituye las pruebas integrales de pedidos y pagos.

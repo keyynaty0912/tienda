@@ -1,4 +1,5 @@
 import type { Product, StoreConfig } from "./schema";
+import { halloweenProducts } from "./halloween";
 const entries = [
   [
     "vestido-alma",
@@ -37,8 +38,8 @@ const entries = [
     "#c8bca7",
   ],
 ] as const;
-export const demoProducts: Product[] = entries.map(
-  ([id, name, category, price, image, color, hex], n) => ({
+export const demoProducts: Product[] = [
+  ...entries.map(([id, name, category, price, image, color, hex], n) => ({
     id,
     name,
     category,
@@ -78,8 +79,9 @@ export const demoProducts: Product[] = entries.map(
     demo: true,
     createdAt: 1720000000000 + n,
     updatedAt: 1720000000000 + n,
-  }),
-);
+  })),
+  ...halloweenProducts,
+];
 export const defaultConfig: StoreConfig = {
   seller: {
     name: "",

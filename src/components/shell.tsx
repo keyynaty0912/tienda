@@ -45,6 +45,9 @@ export function Header() {
           </Link>
           <nav className="desktop-links" aria-label="Categorías">
             <Link href="/catalogo">Colección</Link>
+            <Link className="season-link" href="/halloween">
+              Halloween
+            </Link>
             {["Bebé", "Niña", "Niño", "Unisex"].map((c) => (
               <Link
                 key={c}
@@ -119,6 +122,7 @@ export function Header() {
         <nav className="menu-links">
           {[
             ["Colección", "/catalogo"],
+            ["Halloween", "/halloween"],
             ["Bebé", "/catalogo?categoria=Bebé"],
             ["Niña", "/catalogo?categoria=Niña"],
             ["Niño", "/catalogo?categoria=Niño"],

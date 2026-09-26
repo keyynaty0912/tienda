@@ -12,7 +12,9 @@ import {
   Package,
   Ruler,
   ShoppingBag,
+  MoonStar,
 } from "lucide-react";
+import { HALLOWEEN } from "@/lib/halloween";
 import type { Product } from "@/lib/schema";
 import { cop } from "@/lib/format";
 import { useStore } from "./store";
@@ -40,6 +42,8 @@ export function ProductCard({ product: p }: { product: Product }) {
         </button>
         {!available.length ? (
           <span className="product-tag">Agotado</span>
+        ) : p.occasion === HALLOWEEN ? (
+          <span className="product-tag">Halloween</span>
         ) : p.category === "Unisex" ? (
           <span className="product-tag">Unisex</span>
         ) : null}
@@ -63,6 +67,7 @@ export function ProductCard({ product: p }: { product: Product }) {
 }
 export function Home() {
   const { products, config } = useStore();
+  const costumes = products.filter((p) => p.occasion === HALLOWEEN);
   return (
     <>
       <section className="hero">
@@ -141,6 +146,52 @@ export function Home() {
             </p>
           )}
         </section>
+        {costumes.length > 0 && (
+          <section
+            className="halloween-section"
+            aria-labelledby="halloween-title"
+          >
+            <div className="halloween-intro">
+              <div className="halloween-copy">
+                <div className="eyebrow">
+                  <MoonStar aria-hidden="true" /> Halloween 2026
+                </div>
+                <h2 id="halloween-title">
+                  Pequeños disfraces.
+                  <br />
+                  <em>Grandes aventuras.</em>
+                </h2>
+                <p>
+                  Dragones que sueñan, princesas que exploran y brujitas que
+                  llenan de magia cada historia.
+                </p>
+                <Link className="btn" href="/halloween">
+                  Descubrir Halloween <ArrowRight />
+                </Link>
+              </div>
+              <div className="halloween-note">
+                <span>31</span>
+                <small>de octubre</small>
+                <p>
+                  Una noche para ser
+                  <br />
+                  lo que quieran imaginar.
+                </p>
+              </div>
+            </div>
+            <div className="section-head">
+              <h3>Su próxima gran transformación</h3>
+              <Link className="text-link" href="/halloween">
+                Ver disfraces <ArrowRight />
+              </Link>
+            </div>
+            <div className="product-grid">
+              {costumes.slice(0, 4).map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
         <section className="story">
           <div>
             <div className="eyebrow">Nuestro universo</div>
@@ -193,11 +244,16 @@ export function Home() {
 }
 export function Catalog({
   favoritesOnly = false,
+  collection,
 }: {
   favoritesOnly?: boolean;
+  collection?: string;
 }) {
   const store = useStore(),
     params = useSearchParams();
+  const collectionProducts = store.products.filter(
+    (p) => !collection || p.occasion === collection,
+  );
   const initial = Object.fromEntries(params.entries());
   const [filters, setFilters] = useState<Record<string, string>>({
       categoria: "Todo",
@@ -256,14 +312,14 @@ export function Catalog({
       .normalize("NFD")
       .replace(/\p{Diacritic}/gu, "")
       .toLowerCase();
-  const products = store.products
+  const products = collectionProducts
     .filter(
       (p) =>
         (!favoritesOnly || store.favorites.includes(p.id)) &&
         (filters.categoria === "Todo" || p.category === filters.categoria) &&
-        normalize(p.name + " " + p.category + " " + p.reference).includes(
-          normalize(filters.q),
-        ) &&
+        normalize(
+          p.name + " " + p.category + " " + p.reference + " " + p.occasion,
+        ).includes(normalize(filters.q)) &&
         (!filters.talla ||
           p.variants.some(
             (v) => v.size === filters.talla && v.stock > v.reserved,
@@ -285,20 +341,42 @@ export function Catalog({
       <nav className="breadcrumb">
         <Link href="/">Inicio</Link>
         <ChevronRight />
-        <span>{favoritesOnly ? "Favoritos" : "Colección"}</span>
+        <span>{favoritesOnly ? "Favoritos" : collection || "Colección"}</span>
       </nav>
       <div className="catalog-title">
         <div>
-          <div className="eyebrow">Su próxima historia</div>
-          <h1>{favoritesOnly ? "Tus favoritos" : "La colección"}</h1>
-          <p>Prendas para descubrir el mundo a su manera.</p>
+          <div className="eyebrow">
+            {collection
+              ? "31 de octubre · Halloween 2026"
+              : "Su próxima historia"}
+          </div>
+          <h1>
+            {favoritesOnly
+              ? "Tus favoritos"
+              : collection
+                ? "Un Halloween de cuento"
+                : "La colección"}
+          </h1>
+          <p>
+            {collection
+              ? "Disfraces para niños, princesas y brujitas. Que empiece la imaginación."
+              : "Prendas para descubrir el mundo a su manera."}
+          </p>
         </div>
         {store.demo && (
           <span className="small muted">Catálogo de demostración</span>
         )}
       </div>
       <div className="category-tabs" aria-label="Categoría">
-        {["Todo", "Bebé", "Niña", "Niño", "Unisex"].map((c) => (
+        {(collection
+          ? [
+              "Todo",
+              ...["Bebé", "Niña", "Niño", "Unisex"].filter((c) =>
+                collectionProducts.some((p) => p.category === c),
+              ),
+            ]
+          : ["Todo", "Bebé", "Niña", "Niño", "Unisex"]
+        ).map((c) => (
           <button
             key={c}
             className={filters.categoria === c ? "active" : ""}
@@ -319,7 +397,9 @@ export function Catalog({
             <div className="filter-sizes">
               {[
                 ...new Set(
-                  store.products.flatMap((p) => p.variants.map((v) => v.size)),
+                  collectionProducts.flatMap((p) =>
+                    p.variants.map((v) => v.size),
+                  ),
                 ),
               ].map((s) => (
                 <button
@@ -339,19 +419,21 @@ export function Catalog({
               "Color",
               [
                 ...new Set(
-                  store.products.flatMap((p) => p.variants.map((v) => v.color)),
+                  collectionProducts.flatMap((p) =>
+                    p.variants.map((v) => v.color),
+                  ),
                 ),
               ],
             ],
             [
               "edad",
               "Edad orientativa",
-              [...new Set(store.products.map((p) => p.age))],
+              [...new Set(collectionProducts.map((p) => p.age))],
             ],
             [
               "ocasion",
               "Ocasión",
-              [...new Set(store.products.map((p) => p.occasion))],
+              [...new Set(collectionProducts.map((p) => p.occasion))],
             ],
           ].map(([key, label, values]) => (
             <details key={String(key)} className="filter-group" open>

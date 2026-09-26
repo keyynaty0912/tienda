@@ -344,6 +344,95 @@ small,
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
+.season-link {
+  color: var(--terra-dark);
+}
+.halloween-section {
+  padding: 12px 0 64px;
+}
+.halloween-intro {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 48px;
+  align-items: center;
+  padding: 48px 56px;
+  margin-bottom: 34px;
+  background: #eee5d9;
+  border-top: 1px solid #d5c1ad;
+  border-bottom: 1px solid #d5c1ad;
+}
+.halloween-copy .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--terra-dark);
+  margin-bottom: 18px;
+}
+.halloween-copy h2 {
+  font-size: clamp(38px, 4.2vw, 58px);
+}
+.halloween-copy h2 em {
+  color: var(--sage-dark);
+  font-weight: 400;
+}
+.halloween-copy > p {
+  max-width: 500px;
+  margin: 20px 0 26px;
+}
+.halloween-note {
+  text-align: center;
+  border-left: 1px solid #d5c1ad;
+  padding-left: 40px;
+}
+.halloween-note > span {
+  display: block;
+  font: 100px/1 var(--serif);
+  color: var(--terra-dark);
+}
+.halloween-note > small {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+.halloween-note > p {
+  margin-top: 24px;
+  font: italic 24px/1.25 var(--serif);
+}
+@media (min-width: 761px) and (max-width: 1000px) {
+  .desktop-links {
+    gap: 10px;
+    font-size: 12px;
+  }
+  .desktop-links a {
+    white-space: nowrap;
+  }
+}
+@media (max-width: 760px) {
+  .halloween-intro {
+    grid-template-columns: 1fr;
+    padding: 28px 24px;
+    gap: 24px;
+  }
+  .halloween-note {
+    display: none;
+  }
+  .halloween-copy > p {
+    font-size: 14px;
+  }
+  .halloween-section {
+    padding-bottom: 40px;
+  }
+  .halloween-section .section-head {
+    align-items: start;
+  }
+  .halloween-section .section-head h3 {
+    font-size: 26px;
+    max-width: 210px;
+  }
+  .halloween-section .section-head .text-link {
+    white-space: nowrap;
+    font-size: 12px;
+  }
+}
 .product-photo {
   position: relative;
   background: #eae3da;

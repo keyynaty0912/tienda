@@ -13,6 +13,7 @@
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
     "test": "node node_modules/tsx/dist/cli.mjs --test tests/*.test.ts",
     "seed:demo": "node node_modules/tsx/dist/cli.mjs --env-file=.env.local scripts/seed.ts",
+    "seed:halloween": "node node_modules/tsx/dist/cli.mjs --env-file=.env.local scripts/seed-halloween.ts",
     "admin:grant": "node node_modules/tsx/dist/cli.mjs --env-file=.env.local scripts/grant-admin.ts"
   },
   "dependencies": {
